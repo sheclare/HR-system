@@ -1,0 +1,876 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap');
+
+:root {
+  /* 品牌客製化：主色改為 #0377be */
+  --primary-color: #0377be;
+  --primary-hover: #025a91;
+  --bg-color: #F3F4F6;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --text-main: #1F2937;
+  --text-muted: #6B7280;
+  --border-color: rgba(255, 255, 255, 0.4);
+  --error-color: #EF4444;
+  --error-bg: #FEE2E2;
+  --border-radius: 20px;
+
+  --special-color: #3B82F6;
+  --sick-color: #F59E0B;
+  --personal-color: #10B981;
+  --menstrual-color: #EC4899;
+  /* 追加女性生理假粉紅色 */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'Noto Sans TC', sans-serif;
+  min-height: 100vh;
+  /* 配合品牌色的柔和漸層背景 */
+  background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #bae6fd 100%);
+  color: var(--text-main);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Background Animated Blobs */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  /* 變更為 fixed，讓光暈永遠不會延伸出螢幕外造成跑版 */
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: -1;
+  animation: float 10s infinite ease-in-out alternate;
+}
+
+body::before {
+  width: 400px;
+  height: 400px;
+  /* 變更為較淺的品牌藍色漸層光暈 */
+  background: rgba(3, 119, 190, 0.2);
+  top: -100px;
+  left: -100px;
+}
+
+body::after {
+  width: 300px;
+  height: 300px;
+  /* 變更為較深的品牌藍色漸層光暈 */
+  background: rgba(2, 90, 145, 0.15);
+  bottom: -50px;
+  right: -50px;
+  animation-delay: -5s;
+}
+
+@keyframes float {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  100% {
+    transform: translate(50px, 50px);
+  }
+}
+
+.container {
+  width: 100%;
+  max-width: 640px;
+  min-width: 0;
+  /* 修正 flex item 因為子元素內容太大而無法縮小的問題，解決手機版面被撐出螢幕外 */
+}
+
+.glass-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.header {
+  /* 品牌色背景與漸層 */
+  background: linear-gradient(135deg, var(--primary-color), #2da2eb);
+  padding: 30px;
+  text-align: center;
+  color: white;
+  position: relative;
+}
+
+.brand-logo {
+  max-width: 250px;
+  height: auto;
+  display: block;
+  margin: 0 auto 10px auto;
+  /* 增加光暈讓 Logo 在背景中更立體 */
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+  position: relative;
+  z-index: 1;
+}
+
+.system-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 1;
+}
+
+.header p {
+  font-size: 14px;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+.card-body {
+  padding: 30px;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-main);
+}
+
+.form-control,
+.form-select {
+  width: 100%;
+  max-width: 100%;
+  /* 強制封鎖任何超越 100% 的意圖 */
+  box-sizing: border-box;
+  margin: 0 !important;
+  /* 絕對無效化 iOS 預設塞入的幽靈邊距 */
+  appearance: none;
+  /* 剝奪原生 UI 的保護殼，強行將控制權收歸 CSS */
+  -webkit-appearance: none;
+  /* 確保 100% 寬度不會因為 padding 被撐到螢幕外 */
+  height: 48px;
+  /* 強制所有輸入框、選單有一樣的粗細與高度 */
+  padding: 0 16px;
+  /* 移除上下 padding，改由 height 支撐，避免部分選項被 iOS 擠胖 */
+  font-size: 16px;
+  font-family: inherit;
+  border: 1px solid rgba(209, 213, 219, 0.8);
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.6);
+  color: var(--text-main);
+  transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+  /* 修正過渡動畫範圍，防止下拉箭頭背景圖滑動 */
+  outline: none;
+  min-width: 0;
+  /* 禁止子元素抗拒縮小 */
+}
+
+/* 因為 appearance: none 砍掉了預設箭頭，我們自己畫一個手工的給 Select */
+.form-select {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%236B7280" viewBox="0 0 16 16"><path d="M4.646 6.646a.5.5 0 01.708 0L8 9.293l2.646-2.647a.5.5 0 01.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--primary-color);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 80px;
+  height: auto;
+  padding: 14px 16px;
+  /* 為多行本文保留原本的內距 */
+}
+
+/* 桌面版與平板統一排版：使用流暢的 Flex 帶來單列顯示 */
+.datetime-group {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.datetime-group .date-input {
+  flex: 2;
+  min-width: 0;
+}
+
+.datetime-group .time-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.balance-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+  display: none;
+  /* Hidden by default */
+  animation: slideDown 0.4s ease forwards;
+}
+
+/* 當裡面有顯示出來的生理假卡片時，自動切換成 2x2 網格 */
+.balance-container:has(.bc-menstrual[style*="display: flex"]) {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.balance-card {
+  padding: 16px 12px;
+  border-radius: 16px;
+  color: white;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+
+  /* 解法：讓卡片變成 Flex 容器，就算被撐高也能齊平向上對齊去等高 */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+}
+
+.balance-card:hover {
+  transform: translateY(-2px);
+}
+
+.bc-special {
+  background: linear-gradient(135deg, var(--special-color), #60A5FA);
+}
+
+.bc-sick {
+  background: linear-gradient(135deg, var(--sick-color), #FBBF24);
+}
+
+.bc-personal {
+  background: linear-gradient(135deg, var(--personal-color), #34D399);
+}
+
+.bc-menstrual {
+  background: linear-gradient(135deg, var(--menstrual-color), #F472B6);
+}
+
+.balance-card .title {
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.95;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.balance-card .title i {
+  font-size: 16px;
+}
+
+.balance-card .value {
+  font-size: 20px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  padding: 6px 4px;
+  min-width: 80px;
+  margin-top: 4px;
+  align-self: center;
+}
+
+.balance-card .sub-info {
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.9;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 4px;
+}
+
+.balance-card .future-info {
+  white-space: nowrap;
+  font-size: 12px;
+  opacity: 0.85;
+  margin-top: auto;
+  /* 將這行文字推到卡片最底部 */
+  padding-top: 8px;
+}
+
+.work-info {
+  background: #EEF2FF;
+  border-left: 4px solid var(--primary-color);
+  padding: 12px 16px;
+  border-radius: 0 12px 12px 0;
+  font-size: 14px;
+  color: #4338CA;
+  font-weight: 600;
+  margin-top: 12px;
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.05);
+  margin: 30px 0;
+}
+
+/* 員工自己的請假紀錄 */
+.my-records-container {
+  display: none;
+  /* 預設隱藏，選完人才顯示 */
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.my-records-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.records-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.record-item {
+  background: white;
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.2s;
+}
+
+.record-item:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+}
+
+.record-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.record-time {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.record-type {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.btn-delete-record {
+  background: #FEF2F2;
+  color: var(--error-color);
+  border: 1px solid #FECACA;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-delete-record:hover {
+  background: var(--error-color);
+  color: white;
+}
+
+.total-hrs-box {
+  background: rgba(243, 244, 246, 0.8);
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px dashed #D1D5DB;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.total-hrs-box .label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.total-hrs-value {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--primary-color);
+}
+
+.btn-submit {
+  width: 100%;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+}
+
+.btn-submit:disabled {
+  background: #9CA3AF;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.error-msg {
+  background: var(--error-bg);
+  color: var(--error-color);
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 12px;
+  display: none;
+  border: 1px solid #FECACA;
+  align-items: center;
+  gap: 8px;
+  animation: vibrate 0.3s ease;
+}
+
+@keyframes vibrate {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-4px);
+  }
+
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: opacity 0.4s;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #E0E7FF;
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary-color);
+  letter-spacing: 1px;
+}
+
+/* Logic Footer inside form */
+.logic-footer {
+  margin-top: 30px;
+  font-size: 13px;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.5);
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.logic-footer strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-main);
+}
+
+.logic-footer p {
+  position: relative;
+  padding-left: 16px;
+  margin-bottom: 4px;
+}
+
+.logic-footer p::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #10B981;
+  font-weight: bold;
+}
+
+/* Responsive adjust */
+@media (max-width: 650px) {
+
+  .balance-container,
+  .balance-container:has(.bc-menstrual[style*="display: flex"]) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+
+  .balance-container,
+  .balance-container:has(.bc-menstrual[style*="display: flex"]) {
+    grid-template-columns: 1fr;
+  }
+
+  .datetime-group {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+    width: 100%;
+  }
+
+  .datetime-group .date-input {
+    grid-column: span 2;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .datetime-group .time-input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .card-body {
+    padding: 20px;
+  }
+}
+
+/* 行事曆區塊擴充樣式 */
+.calendar-card {
+  margin-top: 30px;
+}
+
+.calendar-card .header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 解決手機版寬度被日曆撐破：讓外層可以橫向滑動 */
+.calendar-card .card-body {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 15px;
+  /* 手機板或日曆區適用的留白稍減 */
+}
+
+/* 移除固定 min-width，改為父層自動調整，徹底解除卡片被內部撐破的問題 */
+
+.calendar-card .header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+/* 人員圖例區塊 */
+.calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-top: 4px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+/* FullCalendar 樣式客製化 */
+/* 修正電腦版因為移除了右邊按鈕，導致中間標題向右偏移的問題 */
+.fc .fc-toolbar {
+  display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fc .fc-toolbar-chunk {
+  display: flex;
+  align-items: center;
+}
+
+/* 強制將三段區塊均分，讓中間的區塊不管左右有沒有按鈕，都永遠被擠在真正的 50% 正中央 */
+.fc .fc-toolbar-chunk:nth-child(1) {
+  flex: 1;
+  justify-content: flex-start;
+}
+
+.fc .fc-toolbar-chunk:nth-child(2) {
+  flex: 1;
+  justify-content: center;
+}
+
+.fc .fc-toolbar-chunk:nth-child(3) {
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.25rem !important;
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+.fc .fc-button-primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  text-transform: capitalize;
+}
+
+.fc .fc-button-primary:not(:disabled):active,
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:hover {
+  background-color: var(--primary-hover) !important;
+  border-color: var(--primary-hover) !important;
+  box-shadow: none !important;
+}
+
+.fc-theme-standard td,
+.fc-theme-standard th {
+  border-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+.fc-day-today {
+  background-color: rgba(79, 70, 229, 0.05) !important;
+}
+
+/* 事件區塊：請假改用塊狀實心顯示 */
+.fc-event {
+  border: none !important;
+  border-radius: 4px;
+  padding: 3px 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 2px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.fc-event:not(.event-holiday) {
+  color: white !important;
+}
+
+/* 假日特殊事件樣式 */
+.event-holiday,
+.event-holiday .fc-event-main {
+  color: #DC2626 !important;
+  /* 顯眼的深紅色字體 */
+}
+
+.event-holiday {
+  background-color: #FEF2F2 !important;
+  /* 淺紅色(粉和)背景，對比更清晰 */
+  pointer-events: none;
+  /* 讓假日標籤不可點擊 */
+  font-weight: 500;
+  text-align: center;
+  box-shadow: none !important;
+  border: 1px solid #FECACA !important;
+  /* 柔和的紅粉色邊框 */
+}
+
+.event-sick {
+  background-color: var(--sick-color) !important;
+}
+
+.event-personal {
+  background-color: var(--personal-color) !important;
+}
+
+.event-special {
+  background-color: var(--special-color) !important;
+}
+
+.event-menstrual {
+  background-color: var(--menstrual-color) !important;
+}
+
+@media (max-width: 480px) {
+  .fc .fc-toolbar {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  #calendar {
+    min-width: 100%;
+    /* 關閉週末只顯示 5 天時，手機版通常足夠塞得下 */
+  }
+}
+
+/* 週末切換開關 (Toggle Switch) 樣式 */
+.toggle-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  background: rgba(0, 0, 0, 0.15);
+  padding: 6px 12px;
+  border-radius: 20px;
+  transition: 0.2s;
+}
+
+.toggle-container:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.toggle-container input {
+  display: none;
+}
+
+.toggle-slider {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
+  transition: 0.3s;
+}
+
+.toggle-slider::before {
+  content: "";
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.toggle-container input:checked+.toggle-slider {
+  background-color: #10B981;
+  /* 開啟時轉綠色 */
+}
+
+.toggle-container input:checked+.toggle-slider::before {
+  transform: translateX(16px);
+}
+
+/* 頁尾版權宣告 */
+.footer-copyright {
+  text-align: center;
+  margin-top: 30px;
+  padding-bottom: 20px;
+  font-size: 13px;
+  color: var(--text-main);
+  opacity: 0.6;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}

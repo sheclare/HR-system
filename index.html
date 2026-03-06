@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>公司名稱 員工請假系統</title>
+  <!-- 拒絕所有搜尋引擎爬取與建立索引 -->
+  <meta name="robots" content="noindex, nofollow">
+  <!-- 網站圖示 Favicon -->
+  <link rel="icon" href="favicon.png" type="image/png">
+
+  <!-- OGP 社群預覽設定 (LINE/FB 分享時的精美卡片) -->
+  <meta property="og:title" content="公司名稱 員工請假系統">
+  <meta property="og:description" content="公司名稱 專屬內部請假系統，提供即時特休、病假等餘數查詢與表單遞交服務。">
+  <meta property="og:image" content="https://clare-creator-p.github.io/primocase-hr-system/favicon.png">
+  <meta property="og:url" content="https://clare-creator-p.github.io/primocase-hr-system/">
+  <meta property="og:type" content="website">
+  <meta name="description" content="公司名稱 專屬內部請假系統">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+
+  <!-- 載入中遮罩 -->
+  <div id="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">載入系統資料中...</div>
+  </div>
+
+  <div class="container">
+    <div class="glass-card">
+      <div class="header">
+        <img src="logo.png" alt="公司名稱 Logo" class="brand-logo">
+        <h1 class="system-title">員工請假系統</h1>
+        <p>今日：<span id="todayLabel"></span></p>
+      </div>
+
+      <div class="card-body">
+        <form id="leaveForm">
+
+          <!-- 員工選擇 -->
+          <div class="form-group">
+            <label class="form-label">申請人姓名</label>
+            <select class="form-select" id="nameSelect" required>
+              <option value="" disabled selected>請選擇您的姓名...</option>
+            </select>
+            <div id="workInfoDisplay" class="work-info">
+              <i class="fa-solid fa-clock"></i> 您的表定班別：<span id="empShiftSpan">--</span>
+            </div>
+          </div>
+
+          <!-- 視覺化餘額 -->
+          <div class="balance-container" id="balanceArea">
+            <div class="balance-card bc-special">
+              <div class="title"><i class="fa-solid fa-calendar-check"></i> 特休 (週年)</div>
+              <div class="sub-info" id="specialSub">總計 -- hr | 已休 -- hr</div>
+              <div class="value" id="specialDisplay">剩 -- hr</div>
+              <div class="future-info" id="specialFutureInfo" style="display: none;">
+              </div>
+            </div>
+            <div class="balance-card bc-sick">
+              <div class="title"><i class="fa-solid fa-thermometer"></i> 病假 (歷年)</div>
+              <div class="sub-info" id="sickSub">上限 225 hr | 已休 -- hr</div>
+              <div class="value" id="sickDisplay">剩 -- hr</div>
+            </div>
+            <div class="balance-card bc-personal">
+              <div class="title"><i class="fa-solid fa-file-signature"></i> 事假 (歷年)</div>
+              <div class="sub-info" id="personalSub">上限 105 hr | 已休 -- hr</div>
+              <div class="value" id="personalDisplay">剩 -- hr</div>
+            </div>
+            <!-- 生理假 (女性專屬，預設隱藏) -->
+            <div class="balance-card bc-menstrual" id="menstrualCard" style="display: none;">
+              <div class="title"><i class="fa-solid fa-venus"></i> 生理假 (歷年)</div>
+              <div class="sub-info" id="menstrualSub">上限 22.5 hr | 已休 -- hr</div>
+              <div class="value" id="menstrualDisplay">剩 -- hr</div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- 請假類別 -->
+          <div class="form-group">
+            <label class="form-label">請假種類</label>
+            <select class="form-select" id="typeSelect" required>
+              <option value="" disabled selected>請選擇假別...</option>
+              <option value="特休">特休 (不扣薪)</option>
+              <option value="病假">病假 (扣半薪)</option>
+              <option value="事假">事假 (扣全薪)</option>
+              <option value="生理假" id="menstrualOption" style="display: none;">生理假 (半薪，前3天不扣病假)</option>
+            </select>
+          </div>
+
+          <!-- 開始時間 -->
+          <div class="form-group">
+            <label class="form-label">開始時間</label>
+            <div class="datetime-group">
+              <div class="date-input">
+                <input type="date" class="form-control" id="startDate" required>
+              </div>
+              <div class="time-input">
+                <select class="form-select" id="startH" required disabled>
+                  <option>小時</option>
+                </select>
+              </div>
+              <div class="time-input">
+                <select class="form-select" id="startM" required disabled>
+                  <option value="00">00</option>
+                  <option value="30">30</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- 結束時間 -->
+          <div class="form-group">
+            <label class="form-label">結束時間</label>
+            <div class="datetime-group">
+              <div class="date-input">
+                <input type="date" class="form-control" id="endDate" required>
+              </div>
+              <div class="time-input">
+                <select class="form-select" id="endH" required disabled>
+                  <option>小時</option>
+                </select>
+              </div>
+              <div class="time-input">
+                <select class="form-select" id="endM" required disabled>
+                  <option value="00">00</option>
+                  <option value="30">30</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- 動態計算總時數 -->
+          <div class="total-hrs-box">
+            <div class="label">本次申請總時數 (自動排除例假與午休)</div>
+            <div class="total-hrs-value"><span id="totalHrs">0</span> hr</div>
+            <div id="leaveDetailText"
+              style="text-align: center; font-size: 13px; color: #6B7280; margin-top: 8px; font-weight: 500;"></div>
+            <div id="overLimitMsg" class="error-msg"></div>
+          </div>
+
+          <!-- 備註 -->
+          <div class="form-group">
+            <label class="form-label">備註 (可選填)</label>
+            <textarea class="form-control" id="note" placeholder="例如：回診、家中有事... (此備註只會Email通知老闆，不會記錄在公開日曆)"></textarea>
+          </div>
+
+          <!-- 送出按鈕 -->
+          <button type="button" id="submitBtn" class="btn-submit" disabled>
+            <i class="fa-solid fa-paper-plane"></i> 確認送出申請
+          </button>
+
+          <!-- 底部邏輯說明 -->
+          <div class="logic-footer">
+            <strong>系統自動核算邏輯：</strong>
+            <p>標準工時 7.5hr / 日，遇假日自動排除</p>
+            <p>涵蓋 12:00-13:30 午休區間將自動依比例扣除時數</p>
+            <p>跨月休假系統將自動為您拆單至不同月份計算</p>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- 行事曆區塊 -->
+    <div class="glass-card calendar-card">
+      <div class="header">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <h2><i class="fa-regular fa-calendar-days"></i> 同事請假動態</h2>
+          <label class="toggle-container" title="隱藏/顯示週末">
+            <span class="toggle-text">顯示六日</span>
+            <input type="checkbox" id="weekendToggle">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div id="calendarLegend" class="calendar-legend">
+          <!-- 會由 JS 動態生成員工顏色圖例 -->
+        </div>
+      </div>
+      <div class="card-body">
+        <div id="calendar"></div>
+      </div>
+    </div>
+
+    <!-- 頁尾版權宣告 -->
+    <div class="footer-copyright">
+      &copy; 2026 公司名稱. All rights reserved.
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
