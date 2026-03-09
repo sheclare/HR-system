@@ -54,29 +54,50 @@
           </div>
 
           <!-- 視覺化餘額 -->
-          <div class="balance-container" id="balanceArea">
-            <div class="balance-card bc-special">
-              <div class="title"><i class="fa-solid fa-calendar-check"></i> 特休 (週年)</div>
-              <div class="sub-info" id="specialSub">總計 -- hr | 已休 -- hr</div>
-              <div class="value" id="specialDisplay">剩 -- hr</div>
-              <div class="future-info" id="specialFutureInfo" style="display: none;">
+          <div class="balance-wrapper" id="balanceArea" style="display: none;">
+
+            <!-- 特休：獨立大卡片 (選項B 變體：左表明細，右大數字) -->
+            <div class="special-dashboard-card">
+              <!-- 頂部標題與底線 -->
+              <div class="sdc-header">
+                <div class="sdc-title"><i class="fa-solid fa-calendar-check"></i> 特休 (週年)</div>
+              </div>
+
+              <!-- 下方切為左右兩塊 -->
+              <div class="sdc-content">
+                <!-- 左側：明細區 -->
+                <div class="sdc-left-details">
+                  <div id="specialSub" class="sdc-sub">
+                    總計 -- hr<br>已休 -- hr
+                  </div>
+                  <div class="sdc-future" id="specialFutureInfo" style="display: none;"></div>
+                </div>
+
+                <!-- 右側：大數字 -->
+                <div class="sdc-right-remain">
+                  <div class="sdc-remain-box" id="specialDisplay">剩 -- hr</div>
+                </div>
               </div>
             </div>
-            <div class="balance-card bc-sick">
-              <div class="title"><i class="fa-solid fa-thermometer"></i> 病假 (歷年)</div>
-              <div class="sub-info" id="sickSub">上限 225 hr | 已休 -- hr</div>
-              <div class="value" id="sickDisplay">剩 -- hr</div>
-            </div>
-            <div class="balance-card bc-personal">
-              <div class="title"><i class="fa-solid fa-file-signature"></i> 事假 (歷年)</div>
-              <div class="sub-info" id="personalSub">上限 105 hr | 已休 -- hr</div>
-              <div class="value" id="personalDisplay">剩 -- hr</div>
-            </div>
-            <!-- 生理假 (女性專屬，預設隱藏) -->
-            <div class="balance-card bc-menstrual" id="menstrualCard" style="display: none;">
-              <div class="title"><i class="fa-solid fa-venus"></i> 生理假 (歷年)</div>
-              <div class="sub-info" id="menstrualSub">上限 22.5 hr | 已休 -- hr</div>
-              <div class="value" id="menstrualDisplay">剩 -- hr</div>
+
+            <!-- 其他假別：一列 (病假、事假、[生理假]) -->
+            <div class="balance-container-others">
+              <div class="balance-card bc-sick">
+                <div class="title"><i class="fa-solid fa-thermometer"></i> 病假 (歷年)</div>
+                <div class="sub-info" id="sickSub">上限 225 hr | 已休 -- hr</div>
+                <div class="value" id="sickDisplay">剩 -- hr</div>
+              </div>
+              <div class="balance-card bc-personal">
+                <div class="title"><i class="fa-solid fa-file-signature"></i> 事假 (歷年)</div>
+                <div class="sub-info" id="personalSub">上限 105 hr | 已休 -- hr</div>
+                <div class="value" id="personalDisplay">剩 -- hr</div>
+              </div>
+              <!-- 生理假 (女性專屬，預設隱藏) -->
+              <div class="balance-card bc-menstrual" id="menstrualCard" style="display: none;">
+                <div class="title"><i class="fa-solid fa-venus"></i> 生理假 (歷年)</div>
+                <div class="sub-info" id="menstrualSub">上限 22.5 hr | 已休 -- hr</div>
+                <div class="value" id="menstrualDisplay">剩 -- hr</div>
+              </div>
             </div>
           </div>
 

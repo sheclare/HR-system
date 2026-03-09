@@ -221,19 +221,129 @@ textarea.form-control {
   min-width: 0;
 }
 
-.balance-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+.balance-wrapper {
+  display: flex;
+  flex-direction: column;
   gap: 16px;
   margin-bottom: 24px;
-  display: none;
-  /* Hidden by default */
   animation: slideDown 0.4s ease forwards;
 }
 
-/* 當裡面有顯示出來的生理假卡片時，自動切換成 2x2 網格 */
-.balance-container:has(.bc-menstrual[style*="display: flex"]) {
+/* 獨立大卡片 (特休) */
+.special-dashboard-card {
+  background: linear-gradient(135deg, #1a56a8, #3b7dda);
+  border-radius: 16px;
+  padding: 20px 24px;
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s;
+}
+
+.special-dashboard-card:hover {
+  transform: translateY(-2px);
+}
+
+.sdc-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
+.sdc-title {
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.sdc-title i {
+  font-size: 18px;
+}
+
+/* 內容區塊分左右 */
+.sdc-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* 垂直置中對齊 */
+  gap: 16px;
+}
+
+/* 左側文字明細 */
+.sdc-left-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+
+.sdc-sub {
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.95;
+  line-height: 1.4;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* 每一行：左邊 label，右邊數字 */
+.sdc-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.sdc-row .sdc-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0.9;
+}
+
+.sdc-row .sdc-value {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sdc-future {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.95;
+  /* 不再放灰底，自然顯示 */
+}
+
+/* 右側大按鈕 */
+.sdc-right-remain {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.sdc-remain-box {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 32px;
+  font-weight: 800;
+  display: inline-block;
+}
+
+.balance-container-others {
+  display: grid;
   grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+/* 當裡面有顯示出來的生理假卡片時，自動切換成 3 欄 */
+.balance-container-others:has(.bc-menstrual[style*="display: flex"]) {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 @keyframes slideDown {
@@ -261,6 +371,9 @@ textarea.form-control {
   flex-direction: column;
   justify-content: flex-start;
   height: 100%;
+  position: relative;
+  padding-bottom: 30px;
+  /* 統一底部留白給 absolute 的 future-info，確保按鈕對齊 */
 }
 
 .balance-card:hover {
@@ -314,18 +427,26 @@ textarea.form-control {
   font-size: 11px;
   font-weight: 500;
   opacity: 0.9;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-  padding-bottom: 4px;
+  padding-bottom: 6px;
+  flex-grow: 1;
+  /* 自動填滿剩餘高度，把下方的數字按鈕往下推到等寬度齊平 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .balance-card .future-info {
   white-space: nowrap;
-  font-size: 12px;
+  font-size: 11px;
   opacity: 0.85;
-  margin-top: auto;
-  /* 將這行文字推到卡片最底部 */
-  padding-top: 8px;
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  width: 100%;
+  text-align: center;
 }
 
 .work-info {
@@ -596,17 +717,39 @@ textarea.form-control {
 /* Responsive adjust */
 @media (max-width: 650px) {
 
-  .balance-container,
-  .balance-container:has(.bc-menstrual[style*="display: flex"]) {
+  .balance-container-others,
+  .balance-container-others:has(.bc-menstrual[style*="display: flex"]) {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 480px) {
 
-  .balance-container,
-  .balance-container:has(.bc-menstrual[style*="display: flex"]) {
+  .balance-container-others,
+  .balance-container-others:has(.bc-menstrual[style*="display: flex"]) {
     grid-template-columns: 1fr;
+  }
+
+  /* 手機版：特休卡片左右變上下堆疊 */
+  .sdc-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sdc-left-details {
+    text-align: center;
+    width: 100%;
+  }
+
+  .sdc-right-remain {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .sdc-remain-box {
+    font-size: 28px;
+    width: 100%;
+    text-align: center;
   }
 
   .datetime-group {

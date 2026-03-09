@@ -141,7 +141,7 @@ function handleEmpChange() {
 
   if (currentEmp) {
     // 顯示餘額區域
-    els.balanceArea.style.display = 'grid';
+    els.balanceArea.style.display = 'flex';
 
     // 解析並顯示三層式餘額 (GAS 回傳格式如: "15 / 75 (剩 60)")
     const updateBalanceCard = (type, infoStr) => {
@@ -154,17 +154,21 @@ function handleEmpChange() {
       }
 
       if (type === 'special') {
-        let subText = "";
+        // 左側明細：表格式排版 (emoji + 左右對齊)
+        let detailHtml = '';
         if (currentEmp.specialDelayed > 0) {
-          subText += `去年遞延 ${currentEmp.specialDelayed} hr | 今年發放 ${currentEmp.specialNewIssued} hr | `;
+          detailHtml += `<div class="sdc-row"><span class="sdc-label">🕐 去年遞延</span><span class="sdc-value">${currentEmp.specialDelayed} hr</span></div>`;
+          detailHtml += `<div class="sdc-row"><span class="sdc-label">🆕 今年發放</span><span class="sdc-value">${currentEmp.specialNewIssued} hr</span></div>`;
         } else {
-          subText += `總計 ${total} hr | `;
+          detailHtml += `<div class="sdc-row"><span class="sdc-label">📊 總計</span><span class="sdc-value">${total} hr</span></div>`;
         }
-        subText += `已休 ${used} hr`;
+        detailHtml += `<div class="sdc-row"><span class="sdc-label">✅ 已休</span><span class="sdc-value">${used} hr</span></div>`;
+        document.getElementById('specialSub').innerHTML = detailHtml;
 
-        document.getElementById('specialSub').innerText = subText;
+        // 右側大數字
         els.displays.special.innerText = `剩 ${currentEmp.remainSpecial} hr`;
-        // 顯示預測特休資訊
+
+        // 左側底部：未來發放預報
         if (currentEmp.nextSpecialDate && currentEmp.nextSpecialHrs) {
           els.displays.specialFutureInfo.innerHTML = `📌 ${currentEmp.nextSpecialDate} 將發放 ${currentEmp.nextSpecialHrs} hr`;
           els.displays.specialFutureInfo.style.display = 'block';
