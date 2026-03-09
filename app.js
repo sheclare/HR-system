@@ -7,6 +7,7 @@ let holidayList = [];
 let currentEmp = null;
 let leaveRecords = [];
 let calendar = null;
+let globalCompanyName = "企業雲端"; // 保存全域公司名稱
 
 // DOM 元素
 const els = {
@@ -82,15 +83,10 @@ async function fetchData() {
 
     if (Array.isArray(data) && data.length > 0) {
       companyName = data[0].companyName || "企業雲端";
+      globalCompanyName = companyName; // 存到全域變數給送出假單時使用
 
       // --- 1. 動態替換網頁標題 ---
       document.title = companyName + " 員工請假系統";
-
-      // 如果想在畫面上顯示文字，可以把 index.html 裡的 <h1 id="headerTitle"> 打開，這邊替換裡面的字
-      const headerTitle = document.getElementById('headerTitle');
-      if (headerTitle) {
-        headerTitle.innerText = companyName;
-      }
 
       employeeData = data;
       holidayList = data[0].holidayList || []; // 取出共通的假日清單
@@ -158,7 +154,15 @@ function handleEmpChange() {
       }
 
       if (type === 'special') {
-        document.getElementById('specialSub').innerText = `總計 ${total} hr | 已休 ${used} hr`;
+        let subText = "";
+        if (currentEmp.specialDelayed > 0) {
+          subText += `去年遞延 ${currentEmp.specialDelayed} hr | 今年發放 ${currentEmp.specialNewIssued} hr | `;
+        } else {
+          subText += `總計 ${total} hr | `;
+        }
+        subText += `已休 ${used} hr`;
+
+        document.getElementById('specialSub').innerText = subText;
         els.displays.special.innerText = `剩 ${currentEmp.remainSpecial} hr`;
         // 顯示預測特休資訊
         if (currentEmp.nextSpecialDate && currentEmp.nextSpecialHrs) {
@@ -411,7 +415,7 @@ function validateHrs() {
       if (currentEmp.nextSpecialDate && currentEmp.nextSpecialHrs) {
         nextNotice = `<br><span style="font-size: 0.9em; opacity: 0.85;">(📌 系統預報：您將於 ${currentEmp.nextSpecialDate} 獲得 ${currentEmp.nextSpecialHrs} hr 特休)</span>`;
       }
-      showError(true, `<div><i class="fa-solid fa-triangle-exclamation"></i> 特休餘額不足，本次申請將動用預支額度！<br>因屬預支性質，請務必於「備註欄」說明預支原因，以便老闆知悉。${nextNotice}</div>`, 'warning');
+      showError(true, `<div style="text-align:left;"><i class="fa-solid fa-circle-info"></i> <strong>提醒：本次申請為「預排未來特休」</strong><br>系統偵測到您申請的日期將動用到下個年度的特休額度。<br>建議於「備註欄」簡單說明預排原因，通知主管。${nextNotice}</div>`, 'warning');
       // 不 return，允許按鈕解鎖
     } else {
       showError(true, `<i class="fa-solid fa-circle-xmark"></i> 餘假不足！您申請了 ${total} hr，但只剩下 ${remain} hr。`, 'error');
