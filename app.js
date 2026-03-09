@@ -1,5 +1,5 @@
 // 【請替換為您 Google Apps Script 部署後的 Web App URL】
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzm5SiFrezNTimYWJ-xuYgrT_rDj0pQ4Ok_OqRIAzEZwMmoKDShXDWk0aAqZu71KmpWLA/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxGrgw1RRDVVW83K4Yh1ZzMJHtqJKAYytPIH7Ydm_nhbs2kdYh59Bztev5pvviB673TSA/exec";
 
 // 狀態變數
 let employeeData = [];
