@@ -1,5 +1,5 @@
 // 【請替換為您 Google Apps Script 部署後的 Web App URL】
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxYrpaYZQ74UzpEvLUlHp13EcIZ6GD7DQsipBdo7XeQtCAhKhl7SEUxj3Ttw16g4ATtVA/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzm5SiFrezNTimYWJ-xuYgrT_rDj0pQ4Ok_OqRIAzEZwMmoKDShXDWk0aAqZu71KmpWLA/exec";
 
 // 狀態變數
 let employeeData = [];
@@ -78,7 +78,20 @@ async function fetchData() {
     const data = await response.json();
 
     // 如果因為認證被導向 googleusercontent，fetch 預設會透明處理，但如果失敗會進 catch
+    let companyName = "";
+
     if (Array.isArray(data) && data.length > 0) {
+      companyName = data[0].companyName || "企業雲端";
+
+      // --- 1. 動態替換網頁標題 ---
+      document.title = companyName + " 員工請假系統";
+
+      // 如果想在畫面上顯示文字，可以把 index.html 裡的 <h1 id="headerTitle"> 打開，這邊替換裡面的字
+      const headerTitle = document.getElementById('headerTitle');
+      if (headerTitle) {
+        headerTitle.innerText = companyName;
+      }
+
       employeeData = data;
       holidayList = data[0].holidayList || []; // 取出共通的假日清單
 
@@ -461,7 +474,7 @@ async function submitLeave() {
       await Swal.fire({
         icon: 'success',
         title: '申請成功！',
-        html: '系統已發信通知老闆與您的信箱，<br>並為您將行程同步至<br>申請網頁日曆與GOOGLE行事曆。',
+        html: `系統已發信通知主管與您的信箱，<br>並為您將行程同步至 <br>${document.getElementById('headerTitle') ? document.getElementById('headerTitle').innerText : "系統"}網頁日曆與GOOGLE行事曆。`,
         confirmButtonColor: 'var(--primary-color)'
       });
       // 重整頁面
