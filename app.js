@@ -162,15 +162,27 @@ function handleEmpChange() {
         } else {
           detailHtml += `<div class="sdc-row"><span class="sdc-label">📊 總計</span><span class="sdc-value">${total} hr</span></div>`;
         }
-        detailHtml += `<div class="sdc-row"><span class="sdc-label">✅ 已休</span><span class="sdc-value">${used} hr</span></div>`;
+        // 餘額為負時：「已休」→「已預排」
+        if (currentEmp.remainSpecial < 0) {
+          detailHtml += `<div class="sdc-row"><span class="sdc-label">📋 已預排</span><span class="sdc-value">${used} hr</span></div>`;
+        } else {
+          detailHtml += `<div class="sdc-row"><span class="sdc-label">✅ 已休</span><span class="sdc-value">${used} hr</span></div>`;
+        }
         document.getElementById('specialSub').innerHTML = detailHtml;
 
-        // 右側大數字
-        els.displays.special.innerText = `剩 ${currentEmp.remainSpecial} hr`;
+        // 右側大數字（負數時顯示 0）
+        const displayRemain = Math.max(0, currentEmp.remainSpecial);
+        els.displays.special.innerText = `剩 ${displayRemain} hr`;
 
         // 左側底部：未來發放預報
         if (currentEmp.nextSpecialDate && currentEmp.nextSpecialHrs) {
-          els.displays.specialFutureInfo.innerHTML = `📌 ${currentEmp.nextSpecialDate} 將發放 ${currentEmp.nextSpecialHrs} hr`;
+          let futureHtml = `📌 ${currentEmp.nextSpecialDate} 將發放 ${currentEmp.nextSpecialHrs} hr`;
+          if (currentEmp.remainSpecial < 0) {
+            const prebooked = Math.abs(currentEmp.remainSpecial);
+            const netAvailable = currentEmp.nextSpecialHrs - prebooked;
+            futureHtml += `<br><span style="font-size:0.9em; opacity:0.85;">（扣除預排後實際可用 ${netAvailable} hr）</span>`;
+          }
+          els.displays.specialFutureInfo.innerHTML = futureHtml;
           els.displays.specialFutureInfo.style.display = 'block';
         } else {
           els.displays.specialFutureInfo.style.display = 'none';
